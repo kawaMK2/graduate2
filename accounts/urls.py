@@ -10,7 +10,7 @@ Note:
 """
 
 urlpatterns = [
-    path('login/', obtain_jwt_token),
+    path('auth/login/', obtain_jwt_token),
     path('register/', AuthRegisterAPIView.as_view()),
     path('user/<username>/', AuthDetailAPIView.as_view()),
     path('user/<username>/update/', AuthUpdateAPIView.as_view()),

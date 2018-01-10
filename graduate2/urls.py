@@ -22,7 +22,6 @@ from .views import index
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('notes.urls')),
-    path('auth/', include('accounts.urls')),
+    path('api/', include('accounts.urls')),
     path('', index, name='index'),
-    # path('static/', index, name='index'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL)

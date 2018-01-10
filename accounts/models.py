@@ -1,3 +1,4 @@
+# coding=utf-8
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth import models as auth_models
