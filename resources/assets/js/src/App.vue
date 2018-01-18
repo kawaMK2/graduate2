@@ -2,7 +2,6 @@
   <v-app :dark="dark">
 
     <v-dialog v-model="loginDialog" persistent max-width="500px">
-      <v-btn color="primary" dark slot="activator">Open Dialog</v-btn>
       <v-card>
         <v-card-title>
           <span class="headline">Login</span>
@@ -10,7 +9,7 @@
         <v-card-text>
           <v-container grid-list-md>
             <v-layout wrap>
-              <v-flex xs12 md4>
+              <v-flex xs12>
                 <v-text-field v-model="username" label="Username" required/>
               </v-flex>
               <v-flex xs12>
@@ -18,12 +17,24 @@
               </v-flex>
             </v-layout>
           </v-container>
-          <small>*indicates required field</small>
+          <small>{{ loginMessage }}</small>
         </v-card-text>
         <v-card-actions>
           <v-spacer/>
           <v-btn color="blue darken-1" flat @click.native="loginDialog = false">Close</v-btn>
           <v-btn round color="primary" @click.native="loginUser(username, password)">Login</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="logoutDialog" persistent max-width="290">
+      <v-card>
+        <v-card-title class="headline">Log out</v-card-title>
+        <v-card-text>Are you sure you want to log out?</v-card-text>
+        <v-card-actions>
+          <v-spacer/>
+          <v-btn color="green darken-1" flat @click.native="logoutDialog = false">Close</v-btn>
+          <v-btn round color="error" @click.native="logoutUser">OK</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -114,6 +125,7 @@
       <v-layout row justify-space-around align-center style="max-width: 650px">
         <img style="height: 30px" src="./assets/shark_logo_2.png"/>&nbsp;&nbsp;&nbsp;
         <v-text-field
+          v-model="keyword"
           placeholder="Search..."
           single-line
           append-icon="search"
@@ -123,9 +135,11 @@
         />
       </v-layout>
       <v-spacer/>
-      <v-avatar v-if="thumbnailUrl !== '' && login" size="40px" style="background-color: rgba(0,0,0,0.2)"><img v-bind:src="thumbnailUrl"/></v-avatar>
+      <v-avatar v-if="thumbnailUrl !== null && login" size="40px" style="background-color: rgba(0,0,0,0.2)"><img
+        v-bind:src="thumbnailUrl"/></v-avatar>
       <v-btn round color="primary" v-if="login">
-        <v-icon>mode_edit</v-icon>new
+        <v-icon>mode_edit</v-icon>
+        new
       </v-btn>
       <v-btn icon v-if="!login" @click="loginDialog=true">
         <v-icon>account_circle</v-icon>
@@ -138,7 +152,7 @@
       </v-slide-y-transition>
     </v-content>
 
-    <v-footer :fixed="fixed" app>
+    <v-footer :fixed="false" app>
       <span>&copy; 2017</span>
     </v-footer>
   </v-app>
@@ -152,23 +166,25 @@
       return {
         token: null,
         login: false,
-        thumbnailUrl: '',
+        thumbnailUrl: null,
         dark: false,
         clipped: false,
         drawer: false,
-        fixed: false,
         loginDialog: false,
-        username: '',
-        password: '',
+        logoutDialog: false,
+        loginMessage: '*indicates required field',
+        username: null,
+        password: null,
+        keyword: null,
         loginItems: [
           {icon: 'dashboard', title: 'Top', func: function () {}},
           {icon: 'home', title: 'Home', func: function () {}},
-          {icon: 'launch', title: 'Logout', func: this.logoutUser},
+          {icon: 'launch', title: 'Log out', func: this.showLogoutDialog},
           {icon: 'rss_feed', title: 'RSS', func: function () {}}
         ],
         logoutItems: [
           {icon: 'dashboard', title: 'Top', func: function () {}},
-          {icon: 'exit_to_app', title: 'Login', func: this.showLoginDialog},
+          {icon: 'exit_to_app', title: 'Log in', func: this.showLoginDialog},
           {icon: 'rss_feed', title: 'RSS', func: function () {}}
         ],
         miniVariant: false
@@ -189,23 +205,31 @@
           this.token = res.data['token']
           this.login = true
           this.$cookie.set('token', this.token, 7)
+          this.$cookie.set('login', this.login, 7)
           axios.get('/api/user/' + username + '/')
             .then((res) => {
               this.thumbnailUrl = res.data['thumbnail']
               this.$cookie.set('thumbnailUrl', this.thumbnailUrl, 7)
-              this.loginDialog = false
             })
+            .catch((error) => {
+              this.loginMessage = error
+            })
+          this.loginDialog = false
         })
       },
       logoutUser: function () {
         this.login = false
         this.token = null
-        this.thumbnailUrl = ''
-        this.username = ''
-        this.password = ''
+        this.thumbnailUrl = null
+        this.username = null
+        this.password = null
+        this.logoutDialog = false
       },
       showLoginDialog: function () {
         this.loginDialog = true
+      },
+      showLogoutDialog: function () {
+        this.logoutDialog = true
       },
       changeDark: function () {
         this.dark = !this.dark

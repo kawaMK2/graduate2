@@ -14,55 +14,54 @@ from .serializers import *
 from .models import *
 from .permissions import *
 
-
 """     User関連APIView       """
 
 
 class AuthRegisterAPIView(generics.CreateAPIView):
-    permission_classes = (IsAdminUser,)
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+	permission_classes = (IsAdminUser,)
+	queryset = User.objects.all()
+	serializer_class = UserSerializer
 
-    @transaction.atomic
-    def post(self, request, *args, **kwargs):
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+	@transaction.atomic
+	def post(self, request, *args, **kwargs):
+		serializer = UserSerializer(data=request.data)
+		if serializer.is_valid():
+			serializer.save()
+			return Response(serializer.data, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class AuthDetailAPIView(generics.RetrieveAPIView):
-    permission_classes = (IsAuthenticatedOrReadOnly,)
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    lookup_field = 'username'
+	permission_classes = (IsAuthenticatedOrReadOnly,)
+	queryset = User.objects.all()
+	serializer_class = UserSerializer
+	lookup_field = 'username'
 
 
 class AuthUpdateAPIView(generics.UpdateAPIView):
-    permission_classes = (IsAuthenticated, IsOwnAccountOrReadOnly)
-    serializer_class = UserSerializer
-    lookup_field = 'username'
-    queryset = User.objects.all()
+	permission_classes = (IsAuthenticated, IsOwnAccountOrReadOnly)
+	serializer_class = UserSerializer
+	lookup_field = 'username'
+	queryset = User.objects.all()
 
 
 class AuthDeleteAPIView(generics.DestroyAPIView):
-    permission_classes = (IsAuthenticated, IsAdminUser)
-    serializer_class = UserSerializer
-    lookup_field = 'username'
-    queryset = User.objects.all()
+	permission_classes = (IsAuthenticated, IsAdminUser)
+	serializer_class = UserSerializer
+	lookup_field = 'username'
+	queryset = User.objects.all()
 
-    def get_object(self):
-        try:
-            return self.queryset.get(username=self.request.user)
-        except User.DoesNotExist:
-            raise Http404
+	def get_object(self):
+		try:
+			return self.queryset.get(username=self.request.user)
+		except User.DoesNotExist:
+			raise Http404
 
 
 class AuthListAPIView(generics.ListAPIView):
-    permission_classes = (IsOwnAccountOrReadOnly,)
-    serializer_class = UserSerializer
-    queryset = User.objects.all()
+	permission_classes = (IsOwnAccountOrReadOnly,)
+	serializer_class = UserSerializer
+	queryset = User.objects.all()
 
 
 """     Grade関連APIView       """
@@ -70,12 +69,28 @@ class AuthListAPIView(generics.ListAPIView):
 
 
 class GradeListAPIView(generics.ListAPIView):
-    permission_classes = (IsAuthenticatedOrReadOnly,)
-    serializer_class = GradeSerializer
-    queryset = Grade.objects.all()
+	permission_classes = (IsAuthenticatedOrReadOnly,)
+	serializer_class = GradeSerializer
+	queryset = Grade.objects.all()
 
 
 class GradeDetailAPIView(generics.RetrieveAPIView):
-    permission_classes = (IsAuthenticatedOrReadOnly,)
-    serializer_class = GradeSerializer
-    queryset = Grade.objects.all()
+	permission_classes = (IsAuthenticatedOrReadOnly,)
+	serializer_class = GradeSerializer
+	queryset = Grade.objects.all()
+
+
+"""     Belongs関連APIView		"""
+# CreateとEditとDeleteはAPIとしては提供しない
+
+
+class BelongListAPIView(generics.ListAPIView):
+	permission_classes = (IsAuthenticatedOrReadOnly,)
+	serializer_class = BelongSerializer
+	queryset = Belong.objects.all()
+
+
+class BelongDetailAPIView(generics.RetrieveAPIView):
+	permission_classes = (IsAuthenticatedOrReadOnly,)
+	serializer_class = BelongSerializer
+	queryset = Belong.objects.all()

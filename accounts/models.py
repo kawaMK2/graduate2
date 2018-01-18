@@ -44,5 +44,5 @@ class Belong(models.Model):
     """
     user = models.ForeignKey(User, on_delete=models.PROTECT)
     grade = models.ForeignKey(Grade, on_delete=models.PROTECT)
-    start_time = models.DateField()
-    end_time = models.DateField(null=True, blank=True)
+    start = models.DateField()
+    end = models.DateField(null=True, blank=True)

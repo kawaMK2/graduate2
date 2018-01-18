@@ -2,7 +2,6 @@ from django.urls import path
 from rest_framework_jwt.views import obtain_jwt_token
 from .views import *
 
-
 """
 Note:
     参考：
@@ -10,12 +9,14 @@ Note:
 """
 
 urlpatterns = [
-    path('auth/login/', obtain_jwt_token),
-    path('register/', AuthRegisterAPIView.as_view()),
-    path('user/<username>/', AuthDetailAPIView.as_view()),
-    path('user/<username>/update/', AuthUpdateAPIView.as_view()),
-    path('user/<username>/delete/', AuthDeleteAPIView.as_view()),
-    path('users/', AuthListAPIView().as_view()),
-    path('grades/', GradeListAPIView.as_view()),
-    path('grade/<pk>/', GradeDetailAPIView.as_view()),
+	path('auth/login/', obtain_jwt_token),
+	path('register/', AuthRegisterAPIView.as_view()),
+	path('user/<username>/', AuthDetailAPIView.as_view()),
+	path('user/<username>/update/', AuthUpdateAPIView.as_view()),
+	path('user/<username>/delete/', AuthDeleteAPIView.as_view()),
+	path('users/', AuthListAPIView().as_view()),
+	path('grades/', GradeListAPIView.as_view()),
+	path('grade/<pk>/', GradeDetailAPIView.as_view()),
+	path('belongs/', BelongListAPIView.as_view()),
+	path('belong/<pk>/', BelongDetailAPIView.as_view()),
 ]

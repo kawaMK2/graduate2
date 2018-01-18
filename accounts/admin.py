@@ -32,7 +32,7 @@ class GradeAdmin(admin.ModelAdmin):
 
 
 class BelongAdmin(admin.ModelAdmin):
-	list_display = ('user', 'get_grade_name', 'start_time', 'end_time')
+	list_display = ('user', 'get_grade_name', 'start', 'end')
 
 	def get_grade_name(self, obj):
 		return obj.grade.formal_name
