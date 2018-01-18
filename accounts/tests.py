@@ -88,7 +88,7 @@ class BelongTest(TestCase):
         self.belong = Belong.objects.create(
             user=self.user,
             grade=self.grade,
-            start_time=timezone.now()
+            start=timezone.now()
         )
 
     def tearDown(self):
